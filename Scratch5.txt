@@ -54,7 +54,6 @@ log(z)/(log((n + x)/n) + 2)
 log(z)/(log(1 + x/n) + 2)
 log(z)/2
 
-
 approx_z = lambda x, n, z: mpmath.power(1 + mpmath.fdiv(x, n), n + mpmath.fdiv(mpmath.log(z), 2))
 approx_z(100, 2**32, 2)
 approx_z(mpmath.log(20), 2**16, 20)
@@ -121,6 +120,7 @@ pow_im**5*log(z)**5/5^5 + pow_im**4*pow_re*log(z)**5/5^4 + pow_im**4*log(z)**4/5
 pow_im**7*log(z)**7/7^7 + pow_im**6*pow_re*log(z)**7/7^6 + pow_im**6*log(z)**6/7^5 + 3*pow_im**5*pow_re**2*log(z)**7/7^6 + 6*pow_im**5*pow_re*log(z)**6/7^5 + 3*pow_im**5*log(z)**5/7^4 + 5*pow_im**4*pow_re**3*log(z)**7/7^6 + 15*pow_im**4*pow_re**2*log(z)**6/7^5 + 15*pow_im**4*pow_re*log(z)**5/7^4 + 5*pow_im**4*log(z)**4/7^3 + 5*pow_im**3*pow_re**4*log(z)**7/7^6 + 20*pow_im**3*pow_re**3*log(z)**6/7^5 + 30*pow_im**3*pow_re**2*log(z)**5/7^4 + 20*pow_im**3*pow_re*log(z)**4/7^3 + 5*pow_im**3*log(z)**3/7^2 + 3*pow_im**2*pow_re**5*log(z)**7/7^6 + 15*pow_im**2*pow_re**4*log(z)**6/7^5 + 30*pow_im**2*pow_re**3*log(z)**5/7^4 + 30*pow_im**2*pow_re**2*log(z)**4/7^3 + 15*pow_im**2*pow_re*log(z)**3/7^2 + 3*pow_im**2*log(z)**2/7 + pow_im*pow_re**6*log(z)**7/7^6 + 6*pow_im*pow_re**5*log(z)**6/7^5 + 15*pow_im*pow_re**4*log(z)**5/7^4 + 20*pow_im*pow_re**3*log(z)**4/7^3 + 15*pow_im*pow_re**2*log(z)**3/7^2 + 6*pow_im*pow_re*log(z)**2/7 + pow_im*log(z) + pow_re**7*log(z)**7/7^7 + pow_re**6*log(z)**6/7^5 + 3*pow_re**5*log(z)**5/7^4 + 5*pow_re**4*log(z)**4/7^3 + 5*pow_re**3*log(z)**3/7^2 + 3*pow_re**2*log(z)**2/7 + pow_re*log(z) + 1
 
 (1 + pow1*log(x)/n + pow2*log(x)/n)**(z/2)
+
 
 
 (1 + pow_re*log(z)/n + pow_im*log(z)/n)**n * (1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z/2)
@@ -202,3 +202,1088 @@ z = -1/(pow_im + pow_re)
 (pow_im + pow_re) = 1/z
 
 
+
+(1 + (pow_re + pow_im)*log(z)/n)^(n + eps) = e^((pow_re + pow_im)*log(z))
+x1 = (pow_re + pow_im)*log(z)
+zpow = (pow_re + pow_im)
+(1 + x1/n)^(n + eps) = z^zpow
+(n + eps)*log(1 + x1/n) = zpow*log(z)
+eps*log(1 + x1/n) = zpow*log(z) - n*log(1 + x1/n)
+eps = (zpow*log(z) - n*log(1 + x1/n))/log(1 + x1/n)
+eps = ((1/n)*zpow*log(z) - log(1 + x1/n))/((1/n)*log(1 + x1/n))
+
+L'Hopital's Rule
+x1, n, z = sympy.symbols("x1 n z")
+sympy.Derivative("((1/n)*zpow*log(z) - log(1 + x1/n))", "n").doit() = x1/(n**2*(1 + x1/n)) - zpow*log(z)/n**2
+sympy.Derivative("((1/n)*log(1 + x1/n))", "n").doit()               = -log(1 + x1/n)/n**2 - x1/(n**3*(1 + x1/n))
+
+sympy.simplify(sympy.expand("(x1/(n**2*(1 + x1/n)) - zpow*log(z)/n**2) / (-log(1 + x1/n)/n**2 - x1/(n**3*(1 + x1/n)))"))
+
+(-n*x1 + n*zpow*log(z) + x1*zpow*log(z))/(n*log((n + x1)/n) + x1*log((n + x1)/n) + x1)
+(-n*x1 + n*zpow*log(z) + x1*zpow*log(z))/((n + x1)*log((n + x1)/n) + x1)
+
+sympy.Derivative("(-n*x1 + n*zpow*log(z) + x1*zpow*log(z))", "n").doit() = -x1 + zpow*log(z)
+sympy.Derivative("((n + x1)*log((n + x1)/n) + x1)", "n").doit()          = n*(1/n - (n + x1)/n**2) + log((n + x1)/n)
+
+(-x1 + zpow*log(z)) / (n*(1/n - (n + x1)/n**2) + log((n + x1)/n))
+
+sympy.Derivative("(-x1 + zpow*log(z))", "n").doit()                         = 0
+sympy.Derivative("(n*(1/n - (n + x1)/n**2) + log((n + x1)/n))", "n").doit() = n*(-2/n**2 + 2*(n + x1)/n**3) + n*(1/n - (n + x1)/n**2)/(n + x1) + 1/n - (n + x1)/n**2
+
+sympy.simplify(sympy.expand("n*(-2/n**2 + 2*(n + x1)/n**3) + n*(1/n - (n + x1)/n**2)/(n + x1) + 1/n - (n + x1)/n**2"))
+0 / (x1**2/(n**2*(n + x1)))
+0 / (x1**2/n**2)/(n + x1))
+0 / (x1**2/n**3)/(1 + x1/n))
+0
+
+(1 + (pow_re + pow_im)*log(z)/n)^(n + eps) = e^((pow_re + pow_im)*log(z))
+x1 = (pow_re + pow_im)*log(z)
+(1 + x1/n)^(n + eps) = e^x1
+(n + eps)*log(1 + x1/n) = x1
+eps*log(1 + x1/n) = x1 - n*log(1 + x1/n)
+eps = (x1 - n*log(1 + x1/n))/log(1 + x1/n)
+eps = (x1/n - log(1 + x1/n))/((1/n)*log(1 + x1/n))
+
+L'Hopital's Rule
+x1, n = sympy.symbols("x1 n")
+sympy.Derivative("x1/n - log(1 + x1/n)", "n").doit()   = -x1/n**2 + x1/(n**2*(1 + x1/n))
+sympy.Derivative("(1/n) * log(1 + x1/n)", "n").doit() = -log(1 + x1/n)/n**2 - x1/(n**3*(1 + x1/n))
+
+(-x1/n**2 + x1/(n**2*(1 + x1/n))) / (-log(1 + x1/n)/n**2 - x1/(n**3*(1 + x1/n)))
+(-x1 + x1/(1 + x1/n)) / (-log(1 + x1/n) - x1/(n*(1 + x1/n)))
+
+sympy.Derivative("(-x1 + x1/(1 + x1/n))", "n").doit()              = x1**2/(n**2*(1 + x1/n)**2)
+sympy.Derivative("-log(1 + x1/n) - x1/(n*(1 + x1/n))", "n").doit() = 2*x1/(n**2*(1 + x1/n)) - x1**2/(n**3*(1 + x1/n)**2) 
+
+sympy.simplify(sympy.expand("(x1^2/(n^2*(1 + x1/n)^2)) / (2*x1/(n^2*(1 + x1/n)) - x1^2/(n^3*(1 + x1/n)^2))")
+n*x1/(2*n + x1)
+x1/(2 + x1/n)
+x1/2
+
+(x1^2/(n^2*(1 + x1/n)^2)) / (2*x1/(n^2*(1 + x1/n)) - x1^2/(n^3*(1 + x1/n)^2))
+(x1^2/n^2) / (2*x1*(1 + x1/n)/(n^2*) - x1^2/n^3))
+(x1^2) / (2*x1*(1 + x1/n) - x1^2/n)
+(x1^2) / (2*x1 + 2*x1^2/n - x1^2/n)
+(x1^2) / (2*x1)
+x1 / 2 = (pow_re + pow_im)*log(z)/2
+
+
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**2*n
+substitute 2*n = n + (pow_re + pow_im)*log(z)
+             n = (1/2)*n + (1/2)*(pow_re + pow_im)*log(z)
+(1 + (pow_re + pow_im)*log(z)/((1/2)*n/(pow_re + pow_im)*log(z) + (1/2)))**((1/2)*n + (1/2)*(pow_re + pow_im)*log(z))
+(1 + 1/(n/(2*(pow_re + pow_im)*log(z)) + 1/2))**((1/2)*n + (1/2)*(pow_re + pow_im)*log(z))
+
+(1 + (pow_re + pow_im)*log(z)/n)^(2*n)
+substitute 2*n = n + 2*(pow_re + pow_im)*log(z)
+             n = (1/2)*n + (pow_re + pow_im)*log(z)
+(1 + (pow_re + pow_im)*log(z)/((1/2)*n + (pow_re + pow_im)*log(z)))^(n + 2*(pow_re + pow_im)*log(z))
+(1 + 2*(pow_re + pow_im)*log(z)/(n + 2*(pow_re + pow_im)*log(z)))^(n + 2*(pow_re + pow_im)*log(z))
+substitute x = 4*(pow_re + pow_im)*log(z)
+           (1/2)*x = 2*(pow_re + pow_im)*log(z)
+(1 + (1/2)*x/(n + (1/2)*x))^(n + (1/2)*x)
+(1 + x/(2*n + x))^(n + (1/2)*x)
+myexp_left = lambda x, n: mpmath.power(1 + mpmath.fdiv(x, 2*n + x), n + 0.5*x)
+
+
+z_re, z_im, i, prec = 0, 0, 2, 192
+myexp_left(mpmath.fmul(mpmath.mpc(z_re, z_im), mpmath.log(i)), prec)
+
+myexp_left(mpmath.fmul(mpmath.mpc(-1, 1), mpmath.log(10)), prec)
+
+
+class ms():
+    def __init__(self, name, minsum, minsumidx, lenary, minsumary, minsumhsh, z_sum, icount):
+        self.name = name
+        self.maxminsum = 0
+        self.maxminsumidx = -1
+        self.minminsum = 10**8
+        self.minminsumidx = -1
+        self.lenary = 0
+        self.minsumary = []
+        self.minsumhsh = {}
+        self.z_sum = mpmath.mpf(0)
+        self.icount = 0
+    
+    def minsum_func(self, z_re, z_im):
+        if self.lenary < 200 or mpmath.fabs(self.z_sum) < self.maxminsum:
+            self.icount += 1
+            if self.lenary < 200:
+                abs_zsum = float(mpmath.fabs(self.z_sum))
+                if abs_zsum in self.minsumhsh:
+                    if type(self.minsumhsh[abs_sum]) is tuple:
+                        self.minsumhsh[abs_sum] = [self.minsumhsh[abs_sum]]
+                    if type(self.minsumhsh[abs_sum]) is list:
+                        self.minsumhsh[abs_sum].append((self.z_sum, z_re, z_im))
+                else:
+                    self.minsumhsh[abs_zsum] = (self.z_sum, z_re, z_im)
+                self.minsumary.append(self.z_sum)
+                self.lenary = len(self.minsumary)
+            else:
+                self.minsumary.append(self.z_sum)
+                if self.maxminsumidx == -1 or self.minminsumidx == -1:
+                    self.maxminsum = mpmath.fabs(self.minsumary[0])
+                    for msa in range(1, len(self.minsumary)):
+                        abs_minsum = mpmath.fabs(self.minsumary[msa])
+                        if abs_minsum > mpmath.fabs(self.maxminsum):
+                            self.maxminsum = abs_minsum
+                            self.maxminsumidx = msa
+                        if abs_minsum < mpmath.fabs(self.minminsum):
+                            self.minminsum = abs_minsum
+                            self.minminsumidx = msa
+                else:
+                    if self.maxminsumidx != -1 and self.minsumary[self.maxminsumidx] in self.minsumary:
+                        self.minsumary.remove(self.minsumary[self.maxminsumidx])
+                    if float(self.mpmath.fabs(self.maxminsum)) in self.minsumhsh:
+                        _ = self.minsumhsh.pop(float(mpmath.fabs(self.maxminsum)))
+                    elif float(mpmath.fabs(self.maxminsum)) in self.minsumhsh:
+                        _ = self.minsumhsh.pop(float(mpmath.fabs(self.maxminsum)))
+                    elif mpmath.fabs(self.maxminsum) in self.minsumhsh:
+                        _ = self.minsumhsh.pop(mpmath.fabs(self.maxminsum))
+                    self.maxminsum = mpmath.fabs(self.minsumary[0])
+                    for msa in range(1, len(self.minsumary)):
+                        abs_minsum = mpmath.fabs(self.minsumary[msa])
+                        if abs_minsum > mpmath.fabs(self.maxminsum):
+                            self.maxminsum = abs_minsum
+                            self.maxminsumidx = msa
+                        if abs_minsum < mpmath.fabs(self.minminsum):
+                            self.minminsum = abs_minsum
+                            self.minminsumidx = msa
+                abs_zsum = float(mpmath.fabs(self.z_sum))
+                if abs_zsum in self.minsumhsh:
+                    if type(self.minsumhsh[abs_sum]) is tuple:
+                        self.minsumhsh[abs_sum] = [self.minsumhsh[abs_sum]]
+                    if type(self.minsumhsh[abs_sum]) is list:
+                        self.minsumhsh[abs_sum].append((self.z_sum, z_re, z_im))
+                else:
+                    self.minsumhsh[abs_zsum] = (self.z_sum, z_re, z_im)
+                if self.icount > 1000:
+                    print("new minsum" + self.name + " (" + round(mpmath.fabs(self.z_sum), 8) + ") found at coords (" + str(z_re) + ", " + str(z_im) + ")")
+
+
+
+
+ms_e = ms("_e", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye1 = ms("_mye1", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye2 = ms("_mye2", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye3 = ms("_mye3", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye4 = ms("_mye4", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye5 = ms("_mye5", 10**8, -1, 0, [], {}, 0, 0)
+ms_mye6 = ms("_mye6", 10**8, -1, 0, [], {}, 0, 0)
+ms_intpow = ms("_intpow", 10**8, -1, 0, [], {}, 0, 0)
+best_n = lambda iprec: int(mpmath.ceil(mpmath.exp(mpmath.log(iprec)/1.181)))
+myexp_left1 = lambda x, n: mpmath.power(1 + mpmath.fdiv(x, 2*n + x), n + 0.5*x)
+myexp_left2 = lambda x, n: mpmath.power(1 + mpmath.fdiv(x, n + 0.5*x), n + 0.5*x)
+# prec_n = best_n(53)
+prec_n = 6.20128516868674e+187
+mpmath.mp.prec = 512
+# tgt = abs(mpmath.exp(mpmath.fmul(2 * z_mpc, mpmath.log(17))))
+this_myexp, prev_myexp, decreasing_myexp, min_myexp = 2**32, 2**32, [2, 2**32], [2, 2**32] 
+for prec_n in [mpmath.power(2, ipow2) for ipow2 in range(64, 8192*8192 + 1, 64)]:
+    this_myexp = abs(myexp_left(mpmath.fmul(mpmath.zetazero(8), mpmath.log(17)), prec_n))
+    if this_myexp < prev_myexp and this_myexp < decreasing_myexp[1]:
+        decreasing_myexp = [prec_n, this_myexp]
+    if this_myexp < min_myexp[1]:
+        min_myexp = [prec_n, this_myexp]
+    prev_myexp = this_myexp
+for z_re in [x/350 for x in range(-350, 350 + 1)]:
+    for z_im in [x/350 for x in range(14*350, 22*350 + 1)]:
+        for obj in [ms_e, ms_mye1, ms_mye2, ms_mye3, ms_mye4, ms_mye5, ms_mye6, ms_intpow]:
+            obj.z_sum = mpmath.mpf(0)
+        z_mpc = -mpmath.mpc(z_re, z_im)
+        for i in range(1, 5000 + 1):
+            ms_e.z_sum = mpmath.fadd(ms_e.z_sum, (-1)**((i + 1) % 2) * mpmath.exp(mpmath.fmul(2 * z_mpc, mpmath.log(i))))
+            ms_mye1.z_sum = mpmath.fadd(ms_mye1.z_sum, (-1)**((i + 1) % 2) * myexp_left1(mpmath.fmul(0.5*z_mpc, mpmath.log(i)), prec_n))
+            ms_mye2.z_sum = mpmath.fadd(ms_mye2.z_sum, (-1)**((i + 1) % 2) * myexp_left1(mpmath.fmul(z_mpc, mpmath.log(i)), prec_n))
+            ms_mye3.z_sum = mpmath.fadd(ms_mye3.z_sum, (-1)**((i + 1) % 2) * myexp_left1(mpmath.fmul(2*z_mpc, mpmath.log(i)), prec_n))
+            ms_mye4.z_sum = mpmath.fadd(ms_mye4.z_sum, (-1)**((i + 1) % 2) * myexp_left2(mpmath.fmul(0.5*z_mpc, mpmath.log(i)), prec_n))
+            ms_mye5.z_sum = mpmath.fadd(ms_mye5.z_sum, (-1)**((i + 1) % 2) * myexp_left2(mpmath.fmul(z_mpc, mpmath.log(i)), prec_n))
+            ms_mye6.z_sum = mpmath.fadd(ms_mye6.z_sum, (-1)**((i + 1) % 2) * myexp_left2(mpmath.fmul(2*z_mpc, mpmath.log(i)), prec_n))
+            ms_intpow.z_sum = mpmath.fadd(ms_intpow.z_sum, (-1)**((i + 1) % 2) * mpmath.power(i, 2 * z_mpc))
+        for obj in [ms_e, ms_mye1, ms_mye2, ms_mye3, ms_mye4, ms_mye5, ms_mye6, ms_intpow]:
+            obj.minsum_func(z_re, z_im)
+
+for obj in [ms_e, ms_mye, ms_intpow]:
+    min_sum = min([abs(z_sum) for z_sum in obj.minsumary])
+    if type(obj.minsumhsh[float(mpmath.fabs(min_sum))]) is tuple:
+        print("ms" + obj.name + ", " + str(obj.minsumhsh[float(mpmath.fabs(min_sum))]))
+    elif type(obj.minsumhsh[float(mpmath.fabs(min_sum))]) is list:
+        for msh in range(0, len(obj.minsumhsh[float(mpmath.fabs(min_sum))])):
+            print("ms" + obj.name + ", " + str(obj.minsumhsh[float(mpmath.fabs(min_sum))][msh]))
+
+ms_e, (mpf('0.0'), 0.5, 14)
+ms_mye, (mpc(real='0.0', imag='0.0'), -0.9266666666666666, 0.0)
+ms_intpow, (mpc(real='-106027.69717883406', imag='147553.75407192047'), -0.9266666666666666, 3.7066666666666666)
+
+
+(1 + (pow_re + pow_im)*log(z)/n)^(2*n1)
+substitute 2*n1 = n2 + (1/2)*(pow_re + pow_im)*log(z)
+(1 + (pow_re + pow_im)*log(z)/(n2 + (1/2)*(pow_re + pow_im)*log(z)))^(n2 + (1/2)*(pow_re + pow_im)*log(z))
+(1 + (pow_re + pow_im)*log(z)/(n2 + (1/2)*(pow_re + pow_im)*log(z)))^(n2 + (1/2)*(pow_re + pow_im)*log(z))
+substitute (pow_re + pow_im)*log(z)/(n2 + (1/2)*(pow_re + pow_im)*log(z)) = (pow_re + pow_im)*log(z) / n2
+           n2 = n2 + (1/2)*(pow_re + pow_im)*log(z))
+           (1/2)*(pow_re + pow_im)*log(z)) = 0
+
+
+def calc_zeta_sum(z_re, z_im, max_i, prec):
+    best_n = lambda iprec: int(mpmath.ceil(mpmath.exp(mpmath.log(iprec)/1.181)))
+    myexp_left = lambda x, n: mpmath.power(1 + mpmath.fdiv(x, n + 0.5*x), n + 0.5*x)
+    hsh = {}
+    hsh[53] = 10**6
+    hsh[64] = 5 * 10**5
+    hsh[128] = 2.5 * 10**5
+    hsh[256] = 2 * 10**5
+    if prec not in hsh:
+        return -1
+    n = best_n(prec)
+    z_sum_e = mpmath.mpf(0)
+    z_sum_mye = mpmath.mpf(0)
+    z_sum_intpow = mpmath.mpf(0)
+    z_mpc = -mpmath.mpc(z_re, z_im)
+    t1 = time.time()
+    for i in range(1, max_i + 1):
+        # alternating sum
+        z_sum_e = mpmath.fadd(z_sum_e, (-1)**((i + 1) % 2) * mpmath.exp(mpmath.fmul(2 * z_mpc, mpmath.log(i))))
+        z_sum_mye = mpmath.fadd(z_sum_mye, (-1)**((i + 1) % 2) * myexp_left(mpmath.fmul(z_mpc, mpmath.log(i)), n))
+        z_sum_intpow = mpmath.fadd(z_sum_intpow, (-1)**((i + 1) % 2) * mpmath.power(i, 2 * z_mpc))
+        if  i % hsh[prec] == 0:
+            t2 = time.time()
+            print(str(i) + ", time elapsed " + str(round((t2 - t1)/60, 2)) + " minutes")
+            print("z_sum_e = mpc('" + str(z_sum_e.real) + "', '" + str(z_sum_e.imag) + "')")
+            print("abs(z_sum_e) = mpf('" + str(mpmath.fabs(z_sum_e)) + "')")
+            print("z_sum_mye = mpc('" + str(z_sum_mye.real) + "', '" + str(z_sum_mye.imag) + "')")
+            print("abs(z_sum_mye) = mpf('" + str(mpmath.fabs(z_sum_mye)) + "')")
+            print("z_sum_intpow = mpc('" + str(z_sum_intpow.real) + "', '" + str(z_sum_intpow.imag) + "')")
+            print("abs(z_sum_intpow) = mpf('" + str(mpmath.fabs(z_sum_intpow)) + "')")
+    return z_sum_e, z_sum_mye, z_sum_intpow
+
+
+e^0.5+14j 0
+e^2(0.25+7j) = 0
+
+mpmath.mp.prec, maxi = 53, 8*10**6
+z_sum_e, z_sum_mye, z_sum_intpow = calc_zeta_sum(0.25, mpmath.zetazero(8).imag/2, maxi, 53)
+mpc(real='113003.53473550486', imag='1037850.5789680264')
+mpf('1043984.4937196079')
+
+ 
+def calc_and_print_left(i, z_re, z_im, prec):
+    x = mpmath.fmul(4*mpmath.log(i), mpmath.mpc(z_re, z_im))
+    z_left = myexp_left(x, mpmath.power(2, best_n(prec) + 0.5*x))
+    print("mpmath.mpc('" + str(z_left.real) + "', '" + str(z_left.imag) + "')")
+    if z_left.real < 1:
+        print("mpmath.mpc(1 - mpmath.power(2, mpmath.mpf('" + str(mpmath.log(1 - z_left.real, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.imag, 2)) + "')))")
+    else:
+        print("mpmath.mpc(1 + mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.real - 1, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.imag, 2)) + "')))")
+
+calc_and_print_left(2, 0.5, mpmath.zetazero(8).imag, 128)
+mpmath.mpc('-1.861880575089820214368697096249056656603618683596715898181384172657013964783', '-0.7303428811888274281234803971029273831100015791050236645751985546096548344079')
+
+calc_and_print_left(200, 0.5, mpmath.zetazero(8).imag, 256)
+mpmath.mpc('180.2073747218817283887521962999749743214426947907167745374743469163731142479', '86.748499098527936755092713669061064154740168376557518224639687492230540879')
+
+(1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z/2*n)
+myexp_right = lambda z, n: mpmath.power(1 + mpmath.fdiv(z, n), mpmath.fdiv(z, 2*n))
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**2*n
+myexp_left = lambda z, n: mpmath.power(1 + mpmath.fdiv(z, n), 2*n)
+
+best_n = lambda iprec: int(mpmath.ceil(mpmath.exp(mpmath.log(iprec)/1.181)))
+mpmath.mp.prec = 256
+def calc_and_print_right(x, z_re, z_im, prec):
+    z_right = myexp_right(mpmath.fmul(mpmath.log(x), mpmath.mpc(z_re, z_im)), mpmath.power(2, best_n(prec)))
+    print("mpmath.mpc('" + str(z_right.real) + "', '" + str(z_right.imag) + "')")
+    if z_right.real < 1:
+        print("mpmath.mpc(1 - mpmath.power(2, mpmath.mpf('" + str(mpmath.log(1 - z_right.real, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_right.imag, 2)) + "')))")
+    else:
+        print("mpmath.mpc(1 + mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_right.real - 1, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_right.imag, 2)) + "')))")
+
+def calc_and_print_left(x, z_re, z_im, prec):
+    z_left = myexp_left(mpmath.fmul(mpmath.log(x), mpmath.mpc(z_re, z_im)), mpmath.power(2, best_n(prec)))
+    print("mpmath.mpc('" + str(z_left.real) + "', '" + str(z_left.imag) + "')")
+    if z_left.real < 1:
+        print("mpmath.mpc(1 - mpmath.power(2, mpmath.mpf('" + str(mpmath.log(1 - z_left.real, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.imag, 2)) + "')))")
+    else:
+        print("mpmath.mpc(1 + mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.real - 1, 2)) + "')), mpmath.power(2, mpmath.mpf('" + str(mpmath.log(z_left.imag, 2)) + "')))")
+
+calc_and_print_right(2, 0.5, 99.2137, 128)
+mpmath.mpc(real='0.9999999999999999999999999999999995552727740715542474719152646449392724777257708', imag='4.482632149839390380245506826541075924858248298394234182816508048982849972692813e-36')
+mpmath.mpc(1 - mpmath.power(2, mpmath.mpf('-110.7926344978703334291269064837398435091292258356578542043298198469285330566')), mpmath.power(2, mpmath.mpf('-117.4250653009813070299737535741803945976984348903131225035278003479079638272')))
+
+calc_and_print_right(2, 0.5, 99.2137, 256)
+mpmath.mpc('1.000000000000000000000000000000000000011295396073927752966531061612777794918', '0.0')
+mpmath.mpc(1 + mpmath.power(2, mpmath.mpf('-126.0575327458897952286034157768061800737602870017616646573981471785476248789')), mpmath.power(2, mpmath.mpf('-inf')))
+~ mpmath.mpc(1, 0)
+
+calc_and_print_right(200, 0.5, 99.2137, 128)
+mpmath.mpc('1.000000000000000000000000000000000000659973472517589182802802586269155792294', '0.0')
+mpmath.mpc(mpmath.power(2, mpmath.mpf('-120.1889314739923149303252294892831969576983361284845561589668052777469664199')) - 1, mpmath.power(2, mpmath.mpf('-inf')))
+
+calc_and_print_right(200, 0.5, 99.2137, 256)
+mpmath.mpc('1.000000000000000000000000000000000000659973472517589182802802586269155792294', '0.0')
+mpmath.mpc(mpmath.power(2, mpmath.mpf('-120.1889314739923149303252294892831969576983361284845561589668052777469664199')) - 1, mpmath.power(2, mpmath.mpf('-inf')))
+
+calc_and_print_left(2, 0.5, 99.2137, 128)
+mpmath.mpc('1.54162101108875052331133727861861603474024873688927447226866341479069816441', '-1.27412898019380869256470191682281413114422511813845225087366576788842291473')
+
+calc_and_print_left(200, 0.5, 99.2137, 128)
+mpmath.mpc('-90.32695704606519726404614811701016616720242486141539031754687629772922349946', '178.4405806726930585108166126928068239312055537699696310261426939806270782815')
+calc_and_print_left(200, 0.5, 99.2137, 256)
+mpmath.mpc('-90.32695704605458859501338089659523647543685474126917097165368145000414019129', '178.4405806726715662380244749258092784959345737250859255204576650838729876764')
+
+
+(1 + z/n)^(n + z/2) = e^z
+
+e^z = (1 + z/n)^(n + z/2) = (1 + z/n)^n * (1 + z/n)^(z/2)
+
+e^(ln(z)*(a+bi)) = (1 + (ln(z)*(a+bi))/n)^n * (1 + (ln(x)*(a+bi))/n)^(z/2)
+
+myexp_left = lambda z, n: mpmath.power(1 + mpmath.fdiv(z, n), n)
+myexp_right = lambda z, n: mpmath.power(1 + mpmath.fdiv(z, n), mpmath.fdiv(z, 2))
+myexp = lambda z, zpow, n: mpmath.fmul(myexp_left(mpmath.fmul(z, zpow), n), myexp_right(mpmath.fmul(z, zpow), n))
+
+best_n = lambda iprec: int(mpmath.ceil(mpmath.exp(mpmath.log(iprec)/1.181)))
+
+def calc_and_print(z1, z1_pow, iprec):
+    n = best_n(iprec)
+    z2 = myexp(z1, z1_pow, mpmath.power(2, n) + mpmath.power(2, n/2))
+    print("mpmath.mpc('" + str(z2.real) + "', '" + str(z2.imag) + "')")
+    print("mpmath.mpc(" + ("-" if z2.real < 0 else "") + "mpmath.power(2, " + str(mpmath.log(abs(z2.real), 2)) + "), " + ("-" if z2.imag < 0 else "") + "mpmath.power(2, " + str(mpmath.log(abs(z2.imag), 2)) + "))")
+
+calc_and_print(2, mpmath.mpc(0.5, mpmath.power(2, 128 - 4)), mpmath.power(2, best_n(128)))
+z = myexp(2, mpmath.mpc(0.5, mpmath.power(2, mpmath.mp.prec - 1)), mpmath.power(2, best_n(128)))
+mpmath.mpc(real='-4.4448301323572658046554472665886154327045e-116068303764065406596853161452211912363', imag='-3.4607970967024993485119349967510662118789e-116068303764065406596853161452211912362')
+mpmath.mpc(-mpmath.power(2, -3.8557055919976946436902596239385613726e+38), -mpmath.power(2, -3.8557055919976946436902596239385613726e+38))
+
+z = myexp(2, mpmath.mpc(0.5, mpmath.power(2, 128 - 4)), mpmath.power(2, best_n(128)))
+mpmath.mpc('-7.8547810242086417746620800438277425331e-14508537970508175813795383743662754832', '-5.8859821071931134559524924160196735044e-14508537970508175813795383743662754832')
+mpmath.mpc(mpmath.power(2, -48196319899971183029156900904635217693.0), mpmath.power(2, -48196319899971183029156900904635217694.0))
+
+mpmath.mp.prec = 512
+z = myexp(2, mpmath.mpc(0.5, mpmath.power(2, 128)), mpmath.power(2, best_n(128)))
+mpmath.mpc('-1.03995659627849626827340048243265550061348698994028267337284627053022688457036611637074596519870049041971229537277933435440046036483233445670822619106592e-232136607528130813158277332809981371707', '-4.03282272470279596515058010369990276719239079046785687786097999006703341375233381274521910492038151527923209499927602844743014920936290435994172062378293e-232136607528130813158277332809981371708')
+mpmath.mpc(-mpmath.power(2, -771141118399538928620359367219497824737.32358481483062916243908261997311286077549995636706109812353440271644156879828208622380838186619669995862894490286, -mpmath.power(2, -771141118399538928620359367219497824738.690246237912821085961983476951566562028246229888100903248144355269426013748756209965227354299241430544491334518784))
+
+mpmath.mp.prec = 4096
+two = mpmath.mpf(0)
+for i in range(mpmath.mp.prec - 1, int(mpmath.mp.prec/4), -1):
+    two += mpmath.power(2, i)
+
+i = 1024
+while mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two + mpmath.mpf('0.5' + ('0' * i) + '1')).imag - mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two).imag != 0:
+    i += 1
+
+mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two + mpmath.mpf('0.5' + ('0' * 1231) + '1')).imag - mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two).imag
+mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two + mpmath.mpf('0.5' + ('0' * 1232) + '1')).imag - mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, 2 * mpmath.pi()), two), two).imag
+
+ip = -mpmath.lambertw(-mpmath.log(0.5))/mpmath.log(0.5)
+mpmath.log(mpmath.mpc(0.37038, ip), mpmath.zetazero(100))
+mpmath.log(mpmath.mpc(0.37122, ip), mpmath.zetazero(101))
+
+def factors(n):
+    rslt = []
+    for p in primesieve.primes(int(math.sqrt(n))):
+        while n % p == 0:
+            n /= p
+            rslt.append(p)
+        if n == 1:
+            break
+    if n != 1:
+        rslt.append(int(n))
+    return rslt
+
+
+# 
+# e^(ai + bj + ck) = cos(abs_v) + (sin(abs_v)/abs_v)*(ai + bj + ck)
+# e^(a + bi + cj + dk) = e^a * (cos(abs_v) + (sin(abs_v)/abs_v)*(bi + cj + dk)
+# 
+def power3(a, b, c, pow):
+    abs_z = mpmath.sqrt(mpmath.power(a, 2) + mpmath.power(b, 2) + mpmath.power(c, 2))
+    sin_over_z = mpmath.sin(abs_z)/abs_z
+    return mpmath.cos(abs_z), sin_over_z * a, sin_over_z * b, sin_over_z * c
+
+# 
+# e^(ai + bj + ck) = cos(abs_v) + (sin(abs_v)/abs_v)*(ai + bj + ck)
+# e^(a + bi + cj + dk) = e^a * (cos(abs_v) + (sin(abs_v)/abs_v)*(bi + cj + dk))
+# e^((pi/sqrt(2)) * i) + e^((pi/sqrt(2)) * j) = e^((pi/sqrt(3)) * i) + e^((pi/sqrt(3)) * j) + e^((pi/sqrt(3)) * k) = -1
+# (1 + (pi * i)/(n * sqrt(2)) + (pi * j)/(n * sqrt(2)))^n = -1
+# (1 + (pi * i)/(2 * sqrt(2)) + (pi * j)/(2 * sqrt(2)))^2 = 1 + 2*(pi*i)/(2*sqrt(2)) + 2*(pi*j)/(2*sqrt(2)) - 2*(pi^2)/8 + 2*(pi*i*j)/8 = 1 + (pi*i)/sqrt(2) + (pi*j)/sqrt(2) - (pi^2)/4 + (pi*i*j)/4
+# (1 + (pi * i)/(2 * sqrt(2)) + (pi * j)/(2 * sqrt(2)))^4 = 1 + 4*(pi*i)/(2*sqrt(2)) + 4*(pi*j)/(2*sqrt(2)) - 2*(pi^4)/8 + 2*(pi*i*j)/8 = 1 + (pi*i)/sqrt(2) + (pi*j)/sqrt(2) - (pi^2)/4 + (pi*i*j)/4
+# 
+def power4(a, b, c, d, pow):
+    abs_z = mpmath.sqrt(mpmath.power(b, 2) + mpmath.power(c, 2) + mpmath.power(d, 2))
+    sin_over_z = mpmath.exp(a) * mpmath.sin(abs_z)/abs_z
+    return mpmath.exp(a) * (mpmath.cos(abs_z)), sin_over_z * a, sin_over_z * b, sin_over_z * c
+
+
+def get_e1(x, adj):
+    x = abs(x)
+    n = mpmath.mpf(2)
+    dn = mpmath.mpf(2)
+    cmp = 1
+    if adj >= 0.125 and x > mpmath.power(1 + mpmath.fdiv(1, 2), 2 + adj):
+        n = mpmath.mpf(1) + mpmath.power(2, -64)
+        dn = mpmath.mpf(0.25)
+        if adj >= 0.125 and x > mpmath.power(1 + mpmath.fdiv(1, n), n + adj):
+            n = mpmath.mpf(1) - mpmath.power(2, -64)
+            dn = -mpmath.mpf(0.25)
+            if adj >= 0.125 and x > mpmath.power(1 + mpmath.fdiv(1, mpmath.power(2, -64)), mpmath.power(2, -64) + adj):
+                return 2**32
+    for pow2 in range(3, 64 + 1, 1):
+        if x < mpmath.power(1 + mpmath.fdiv(1, mpmath.power(2, pow2)), mpmath.power(2, pow2) + adj):
+            if adj >= 0.125:
+                n = mpmath.power(2, pow2 - 1)
+                dn = mpmath.power(2, pow2 - 2)
+            else:
+                n = mpmath.power(2, pow2 - 1)
+                dn = mpmath.power(2, pow2 - 2)
+                cmp = -1
+                break
+    iter = 0
+    print("n is " + str(n))
+    print("dn is " + str(dn))
+    while (cmp == 1 and mpmath.power(1 + mpmath.fdiv(1, n), n + adj) > x) or (cmp == -1 and mpmath.power(1 + mpmath.fdiv(1, n), n + adj) < x):
+        iter += 1
+        n += dn
+        if (cmp == 1 and mpmath.power(1 + mpmath.fdiv(1, n), n + adj) < x) or (cmp == -1 and mpmath.power(1 + mpmath.fdiv(1, n), n + adj) > x):
+            n -= dn
+            dn /= 2
+            if dn < mpmath.power(2, -mpmath.mp.prec):
+                break
+        if iter > 10**4:
+            break
+    return n
+
+
+def get_e2(x, adj):
+    x = abs(x)
+    n = mpmath.mpf(2)
+    dn = mpmath.mpf(2)
+    if x > mpmath.exp(-1):
+        return mpmath.inf 
+    elif x < mpmath.power(1 - mpmath.fdiv(1, 2), 2 + adj):
+        n = mpmath.mpf(1.0001220703125)
+        dn = mpmath.mpf(0.5)
+    for pow2 in range(4, 64 + 1, 2):
+        if x > mpmath.power(1 - mpmath.fdiv(1, mpmath.power(2, pow2)), mpmath.power(2, pow2) + adj):
+            n = mpmath.power(2, pow2 - 2)
+            dn = mpmath.power(2, pow2 - 3)
+        else:
+            break
+    iter = 0
+    while mpmath.power(1 - mpmath.fdiv(1, n), n + adj) < x:
+        iter += 1
+        n += dn
+        if mpmath.power(1 - mpmath.fdiv(1, n), n + adj) > x:
+            n -= dn
+            dn /= 2
+            if dn < mpmath.power(2, -mpmath.mp.prec):
+                break
+        if iter > 10**4:
+            break
+    return n
+
+
+
+returns 1/e
+
+def get_e4(x, adj=0):
+    x = abs(x)
+    n = mpmath.mpf(2)
+    dn = mpmath.mpf(64)
+    cmp = 1
+    if x >= 0.5:
+        return 1
+    elif x > mpmath.fdiv(1, mpmath.power(1 + mpmath.fdiv(1, 2), 2 + adj)):
+        n = mpmath.mpf(1.0625)
+        dn = mpmath.mpf(0.125)
+        cmp = -1
+    elif x > mpmath.fdiv(1, mpmath.power(1 + mpmath.fdiv(1, 1.0001), 1.0001 + adj)):
+        n = mpmath.mpf(1.0001)
+        dn = mpmath.mpf(0.0016)
+        cmp = -1
+    elif x < mpmath.fdiv(1, mpmath.power(1 + mpmath.fdiv(1, 0.99999999), 0.99999999 + adj)):
+        n = mpmath.mpf(0.99999999)
+        dn = -mpmath.power(2, -10)
+    elif x < 1/math.e:
+        return math.inf
+    iter = 0
+    print("n " + str(n) + ", dn " + str(dn) + ", cmp " + str(cmp))
+    compare = lambda val, x, posneg: True if (val > x and posneg > 0) or (val < x and posneg < 0) else False 
+    while compare(mpmath.fdiv(1, mpmath.power(1 + mpmath.fdiv(1, n), n + adj)), x, cmp):
+        iter += 1
+        n += dn
+        if not compare(mpmath.fdiv(1, mpmath.power(1 + mpmath.fdiv(1, n), n + adj)), x, cmp):
+            n -= dn
+            dn /= 2
+            if dn < mpmath.power(2, -mpmath.mp.prec):
+                break
+        if iter > 4*mpmath.mp.prec or n < 0:
+            print("possible non-convergence")
+            break
+    return n
+
+
+def get_e5(x, adj):
+    n = mpmath.mpf(2)
+    dn = mpmath.mpf(2)
+    pi = mpmath.mpc(0, mpmath.pi())
+    pow2 = min(mpmath.mp.prec, 64)
+    two = mpmath.power(2, -pow2)
+    if adj == mpmath.mpc(0, mpmath.pi()/2):
+        # mpmath.mpf('-0.041079238187590181587515379250572247269049')
+        if x > mpmath.power(1 + mpmath.fdiv(pi, 1 + two), two + adj).real:
+            return 1
+        if x < mpmath.power(1 + mpmath.fdiv(pi, 2), 2 + adj).real:
+            n = mpmath.mpf(1) + two
+            dn = mpmath.mpf(0.5)
+    else:
+        if x > mpmath.power(1 + mpmath.fdiv(pi, 1 + two), two + adj).real:
+            return 1
+        f = mpmath.mpf('1.3476738473541767437418299360071350666057')
+        if x == mpmath.power(1 + mpmath.fdiv(pi, f), f + adj).real:
+            return f
+        minval = mpmath.mpf('-2.32059738855693746160808907538830233492')
+        for thisx in [mpmath.fdiv(i, 64) for i in range(2 * 64, 6 * 64)]:
+            if mpmath.power(1 + mpmath.fdiv(pi, thisx), thisx + adj).real < minval:
+                minval = mpmath.power(1 + mpmath.fdiv(pi, 2), 2 + adj).real
+        if x < minval:
+            return 0
+        if x > mpmath.power(1 + mpmath.fdiv(pi, 2), 2 + adj).real:
+            n = mpmath.mpf(1) + two
+            dn = mpmath.mpf(0.5)
+    for pow2 in range(4, 64 + 1, 2):
+        if x < mpmath.power(1 + mpmath.fdiv(pi, mpmath.power(2, pow2)), mpmath.power(2, pow2) + adj).real:
+            n = mpmath.power(2, pow2 - 2)
+            dn = mpmath.power(2, pow2 - 3)
+        else:
+            break
+    iter = 0
+    two = mpmath.power(2, -mpmath.mp.prec)
+    while mpmath.power(1 + mpmath.fdiv(pi, n), n + adj).real > x:
+        iter += 1
+        n += dn
+        if mpmath.power(1 + mpmath.fdiv(pi, n), n + adj).real < x:
+            n -= dn
+            dn /= 2
+            if dn < two:
+                break
+        if iter > 10**4:
+            break
+    return n
+
+
+def get_e6(x, adj):
+    x = abs(x)
+    n = mpmath.mpf(2)
+    dn = mpmath.mpf(2)
+    pi = mpmath.mpc(0, mpmath.pi())
+    if adj == mpmath.mpc(0, mpmath.pi()/2):
+        if x > mpmath.power(1 - mpmath.fdiv(pi, 1.25), 1.25 + adj).real:
+            return mpmath.inf
+        if x < 1:
+            n = 
+    elif x > mpmath.power(1 - mpmath.fdiv(1, 2), 2 + adj).real:
+        n = mpmath.mpf(1.0001220703125)
+        dn = mpmath.mpf(0.5)
+    for pow2 in range(4, 64 + 1, 2):
+        if x > mpmath.power(1 - mpmath.fdiv(pi, mpmath.power(2, pow2)), mpmath.power(2, pow2) + adj).real:
+            n = mpmath.power(2, pow2 - 2)
+            dn = mpmath.power(2, pow2 - 3)
+        else:
+            break
+    iter = 0
+    while abs(mpmath.power(1 - mpmath.fdiv(1, n), n + adj).real) > x:
+        iter += 1
+        n += dn
+        if mpmath.power(1 - mpmath.fdiv(1, n), n + adj).real > x:
+            n -= dn
+            dn /= 2
+            if dn < mpmath.power(2, -mpmath.mp.prec):
+                break
+        if iter > 10**4:
+            break
+    return n
+
+
+
+
+one = pyquaternion.Quaternion(1, 0, 0, 0)
+i = pyquaternion.Quaternion(0, 1, 0, 0)
+j = pyquaternion.Quaternion(0, 0, 1, 0)
+k = pyquaternion.Quaternion(0, 0, 0, 1)
+q = pyquaternion.Quaternion(1, numpy.pi, numpy.pi, numpy.pi)
+
+pi = numpy.pi
+n = 10**8
+(1 + (pi*i)/n + (pi*j)/n + (pi*k)/n)**(n + 0.5 + pi*i/4 + pi*j/4 + pi*k/4)
+Quaternion(0.43453756157654716, -0.5199927480368263, -0.5199927480368263, -0.5199927480368263)
+(1 + (pi*i)/(n*numpy.sqrt(3)) + (pi*j)/(n*numpy.sqrt(3)) + (pi*k)/(n*numpy.sqrt(3)))**(n + 0.5 + pi*i + pi*j + pi*k)
+Quaternion(-0.5111705101900349, 0.49622063436908853, 0.49622063436908853, 0.49622063436908853)
+
+n  = 4000
+(1 + (pi*i)/(n*numpy.sqrt(3)) + (pi*j)/(n*numpy.sqrt(3)) + (pi*k)/(n*numpy.sqrt(3)))**(n + pi*i/2 + pi*j/2 + pi*k/2)
+Quaternion(-1.0012344614902897, 3.7364036643106084e-07, 3.7364036643106084e-07, 3.7364036643106084e-07)
+(1 + (pi*i)/(n*numpy.sqrt(3)) + (pi*j)/(n*numpy.sqrt(3)) + (pi*k)/(n*numpy.sqrt(3)))**(n + pi*i/3 + pi*j/3 + pi*k/3)
+Quaternion(-1.0012344614902897, 3.7364036643106084e-07, 3.7364036643106084e-07, 3.7364036643106084e-07)pyquaternion.Quaternion.log(1 + (pi*i)/n + (pi*j)/n + (pi*k)/n)/pyquaternion.Quaternion.log(pyquaternion.Quaternion(-1, 0, 0, 0))
+
+
+n = 1000
+q = pyquaternion.Quaternion(1, numpy.pi/n, numpy.pi/n, numpy.pi/n)
+q**n
+Quaternion(0.6661371314192844, -0.4306161985429402, -0.4306161985429402, -0.4306161985429402)
+q = pyquaternion.Quaternion(1, numpy.pi/(n * numpy.sqrt(3)), numpy.pi/(n * numpy.sqrt(3)), numpy.pi/(n * numpy.sqrt(3)))
+q**n
+Quaternion(-1.0012344614902897, 3.7364036643106084e-07, 3.7364036643106084e-07, 3.7364036643106084e-07)
+q**pyquaternion.Quaternion(n, pi*i/8, pi*j/8, pi*k/8)
+Quaternion(3.2338250914366094e-07, 0.5777065176166859, 0.5777065176166859, 0.5777065176166859)
+q**pyquaternion.Quaternion(n, 4*pi*i, 4*pi*j, 4*pi*k)
+Quaternion(3.2338250914366094e-07, 0.5777065176166859, 0.5777065176166859, 0.5777065176166859)
+n = 500
+q = pyquaternion.Quaternion(1, numpy.pi/(n * numpy.sqrt(3)), numpy.pi/(n * numpy.sqrt(3)), numpy.pi/(n * numpy.sqrt(3)))
+q**pyquaternion.Quaternion(n + 1, 4*pi*i, 4*pi*j, 4*pi*k)
+Quaternion(-1.009918534293708, -0.003639473427506688, -0.003639473427506688, -0.003639473427506688)
+q**pyquaternion.Quaternion(n + 1, 2*pi*i, 2*pi*j, 2*pi*k)
+Quaternion(-1.009918534293708, -0.003639473427506688, -0.003639473427506688, -0.003639473427506688)
+q**pyquaternion.Quaternion(n + 1, pi/3, pi/3, pi/3)
+Quaternion(-1.009918534293708, -0.003639473427506688, -0.003639473427506688, -0.003639473427506688)
+
+
+
+
+eps = (x/log(1 + x/n)) - n
+(1 + x/n)^(n + eps) = e^x
+(1 + x/n)^(n + (x/log(1 + x/n)) - n) = e^x
+(1 + x/n)^(x/log(1 + x/n)) = e^x
+
+eps = x/2
+(1 + x/n)^(n + eps) = e^x
+(1 + x/n)^(n + x/2) = e^x
+
+(1 + ln(x)/n)^(n + ln(x)/2) = e^ln(x)
+(n + ln(x)/2)*log(1 + ln(x)/n) = ln(x)
+n*log(1 + ln(x)/n) = ln(x) - (ln(x)/2)*log(1 + ln(x)/n)
+n*log(1 + ln(x)/n) = ln(x)*(1 - (1/2)*log(1 + ln(x)/n))
+(1 + ln(x)/n)^n = e^ln(x)*(1 - (1/2)*log(1 + ln(x)/n))
+(1 + ln(x)/n)^n = e^(ln(x) - (1/2)*ln(x)*log(1 + ln(x)/n))
+(1 + ln(x)/n)^n = e^ln(x)/e^(ln(x)*(1/2)*log(1 + ln(x)/n))
+(1 + ln(x)/n)^n = x/x^((1/2)*log(1 + ln(x)/n))
+
+ln(x) = n*log(1 + ln(x)/n) / (1 - (1/2)*log(1 + ln(x)/n))
+ln(x) = n / (1/log(1 + ln(x)/n) - 1/2)
+ln(x) * (1/log(1 + ln(x)/n) - 1/2) = n
+x = e^(n / (1/log(1 + ln(x)/n) - 1/2))
+sqrt(x) = e^(1/2)*(n / (1/log(1 + ln(x)/n) - 1/2))
+
+# p1p2 = e^61.535782837842311364741469541872681225432
+# sqrt_p1p2 = e^30.767891418921155682370734770936
+# 530457905397658442881753081
+# p1 = e^29.972492502461657327448850611089
+# p2 = e^31.563290335380654037292618930784
+
+# find n such than log_p2/log_n - log_p1/log_n = 1
+# log_n = log_p2 - log_p2
+# n = mpmath.exp(mpmath.log(p2) - mpmath.log(p1)) 
+# mpmath.mpf('4.9076628617729954155592273914703170395774')
+
+# find n1 such than log_p2/log_n - log_sqrt_p1p2/log_n = 1
+# find n2 such than log_sqrt_p1p2/log_n - log_sqrt_p1/log_n = 1
+# log_n = log_p2 - log_sqrt_p1p2
+# n = mpmath.exp(mpmath.log(p2) - mpmath.log(mpmath.sqrt(p1p2))) 
+# mpmath.mpf('2.2153245499865240773770700530041473707343')
+# log_n = log_sqrt_p1p2 - log_p1
+# n = mpmath.exp(mpmath.log(mpmath.sqrt(p1p2)) - mpmath.log(p1)) 
+# mpmath.mpf('2.2153245499865240773770700530041473707343')
+
+# mpmath.log(p1p2, mpmath.mpf('4.9076628617729954155592273914703170395774'))
+# mpf('38.682340121704018052645852708862764794826')
+# mpmath.log(p1p2, mpmath.mpf('2.2153245499865240773770700530041473707343'))
+# mpf('77.364680243408036105291705417725529590029')
+# mpmath.log(p1p2, mpmath.mpf('2.2153245499865240773770700530041473707343')) / mpmath.log(p1p2, mpmath.mpf('4.9076628617729954155592273914703170395774'))
+# mpf('2.0000000000000000000000000000000000000118')
+# mpmath.mpf('4.9076628617729954155592273914703170395774') / mpmath.mpf('2.2153245499865240773770700530041473707343')
+# mpf('2.215324549986524077377070053004147370746')
+
+# mpmath.log(mpmath.log(p1p2) / mpmath.mpf('4.9076628617729954155592273914703170395774')) / mpmath.log(pi) = mpmath.mpf('2.215324549986524077377070053004147370746')
+# mpmath.log(pi) = mpmath.log(mpmath.log(p1p2) / mpmath.mpf('4.9076628617729954155592273914703170395774')) / mpmath.mpf('2.215324549986524077377070053004147370746')
+# pi = mpmath.exp(mpmath.log(mpmath.log(p1p2) / mpmath.mpf('4.9076628617729954155592273914703170395774')) / mpmath.mpf('2.215324549986524077377070053004147370746'))
+# pi = mpmath.mpf('3.131501664191563910690803002383842072068')
+
+e^pi*i = -1 = mpmath.power(1 + mpmath.fdiv(mpmath.mpc(0, pi), n), n + mpmath.mpc(0, pi)/2)
+mpmath.mpc(0, p) = (n + mpmath.mpc(0, pi)/2)) * mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n)
+n * mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n) = mpmath.mpc(0, pi) - (mpmath.mpc(0, pi)/2) * mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n)
+n = mpmath.mpc(0, pi) * (1 - (1/2) * mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n)) / mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n)
+
+pi = mpmath.mpf('3.131501664191563910690803002383842072068')
+
+# 
+# find_n(pi, 32, 128)
+# find_n(pi, int(mpmath.mp.prec/2.6666), mpmath.mp.prec)
+# 
+def find_n(search_type, pi, min_pow2, iprec):
+    savedprec = mpmath.mp.prec
+    if iprec > mpmath.mp.prec:
+        mpmath.mp.prec = iprec
+    min_dist = mpmath.power(2, mpmath.mp.prec)
+    min_n = 0
+    dist_decreasing = False
+    dist_decreasing_n1 = 0
+    dist_decreasing_n2 = 0
+    this_dist, prev_dist = 2**32, 2**32
+    #imult = iprec/1.5
+    imult = iprec*15/16
+    max_pow2 = iprec*31/32
+    for n1 in [mpmath.power(2, x/imult) for x in range(int(imult*min_pow2), int(imult*max_pow2))]:
+        n2 = mpmath.mpc(0, pi) * (1 - (1/2) * mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n1))) / mpmath.log(1  + mpmath.fdiv(mpmath.mpc(0, pi), n1))
+        this_dist = abs(n2 - n1)
+        if this_dist < min_dist:
+            dist_decreasing = True
+            min_dist = this_dist
+            min_n = n1
+        else:
+            dist_decreasing = False
+            if dist_decreasing_n1 == 0:
+                dist_decreasing_n1 = n1
+        if (not dist_decreasing) and (this_dist > prev_dist) and (dist_decreasing_n2 == 0):
+            dist_decreasing_n2 = n1
+        prev_dist = this_dist
+    if savedprec != mpmath.mp.prec:
+        mpmath.mp.prec = savedprec
+    return dist_decreasing_n1, dist_decreasing_n2, min_n
+
+
+
+class arrayz:
+    def __init__(self):
+        self.log_p1_e_ary = []
+        self.log_p1_p1p2_ary = []
+        
+        self.f1_hsh = {}
+        self.f2_hsh = {}
+        self.pi_hsh = {}
+        self.log_pi_hsh = {}
+        self.log_p1_e_hsh = {}
+        self.log_p1_p1p2_hsh = {}
+        self.log_min_n_hsh = {}
+        self.log_dist_decr_n1_hsh = {}
+        self.log_dist_decr_n2_hsh = {}
+    
+    def get_f1_sorted_log_p1_e(self):
+        return [self.f1_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_f1_sorted_log_p1_p1p2(self):
+        return [self.f1_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_f2_sorted_log_p1_e(self):
+        return [self.f2_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_f2_sorted_log_p1_p1p2(self):
+        return [self.f2_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_pi_sorted_log_p1_e(self):
+        return [self.pi_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_pi_sorted_log_p1_p1p2(self):
+        return [self.pi_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_log_pi_sorted_log_p1_e(self):
+        return [self.log_pi_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_log_pi_sorted_log_p1_p1p2(self):
+        return [self.log_pi_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_log_min_n_sorted_log_p1_e(self):
+        return [self.log_min_n_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_log_min_n_sorted_log_p1_p1p2(self):
+        return [self.log_min_n_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_log_dist_decr_n1_sorted_log_p1_e(self):
+        return [self.log_dist_decr_n1_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_log_dist_decr_n1_sorted_log_p1_p1p2(self):
+        return [self.log_dist_decr_n1_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+    
+    def get_log_dist_decr_n2_sorted_log_p1_e(self):
+        return [self.log_dist_decr_n2_hsh[x] for x in sorted(self.log_p1_e_ary)]
+    
+    def get_log_dist_decr_n2_sorted_log_p1_p1p2(self):
+        return [self.log_dist_decr_n2_hsh[self.log_p1_e_hsh[x]] for x in sorted(self.log_p1_p1p2_ary)]
+
+
+
+
+p1, p2 = 10396522617497, 51022627941473
+p1, p2 = 14011402254263, 20852450975261
+p1, p2 = 15053428029503, 66152457549107
+p1p2 = mpmath.fmul(p1, p2)
+sqrt_p1p2 = mpmath.sqrt(p1p2)
+true_logp1_e = mpmath.log(p1)
+true_logp1_p1p2 = mpmath.log(p1, p1p2)
+true_f1 = mpmath.exp(mpmath.log(p2) - mpmath.log(p1))
+true_f2 = mpmath.exp(mpmath.log(sqrt_p1p2) - mpmath.log(p1))
+true_pi = mpmath.exp(mpmath.log(mpmath.log(p1p2) / true_f1) / true_f2)
+true_logpi = mpmath.log(true_pi, mpmath.pi())
+true_dist_decreasing_n1, true_dist_decreasing_n2, true_min_n = find_n(true_pi, int(mpmath.mp.prec/2.6666), 1.5 * mpmath.mp.prec)
+
+idigits = 13
+aryprimes = primesieve.primes(int(10**5.75 + 10**5 + 10**4.25))
+olda = arrayz()
+newa = arrayz()
+pary = [p1, p2]
+# len(aryprimes)
+it = primesieve.Iterator()
+const1 = 2*3*5*7 # 2310
+const2 = 2*3*5*7*11*13*17*23 # 510510
+# const2 = 2*3*5*7*11*13*17*23 # 11741730
+for i in range(0, 127):
+for i in range(0, 3):
+    try:
+        mpmath.mp.prec = 128
+        newp1, newp2 = 2, 2
+        bloop = True
+        while bloop:
+            newp1, newp2 = generate_primes(idigits)
+            if newp1 > 10**(idigits - 1) and len(str(newp1)) >= idigits + 1 and newp1 not in pary and newp2 > 10**(idigits - 1) and len(str(newp2)) >= idigits + 1 and newp2 not in pary:
+                bloop = False
+                pary.append(newp1)
+                pary.append(newp2)
+        print(str(newp1) + ", " + str(newp2))
+        thisary1 = [newp1, newp2]
+        for thisp1 in thisary1:
+            dir = 1 if thisp1 < sqrt_p1p2 else -1
+            thisp2 = mpmath.floor(p1p2/thisp1 + const1*dir + const2*random.random()*dir)
+            if mpmath.log(thisp2, 2) < 53:
+                it.skipto(int(thisp2))
+                thisp2 = it.next_prime()
+            else:
+                thisp2 = make_prime(thisp2, aryprimes, 30*dir, 1)
+            newp1 = min(thisp1, thisp2)
+            newp2 = max(thisp1, thisp2)
+            newp1p2 = mpmath.fmul(newp1, newp2)
+            
+            f1_newp1_newp2 = mpmath.exp(mpmath.log(newp2) - mpmath.log(newp1))
+            f2_p1p2_newp1 = mpmath.exp(mpmath.log(sqrt_p1p2) - mpmath.log(newp1))
+            pi_p1p2_newp1_newp2 = mpmath.exp(mpmath.log(mpmath.log(p1p2) / f1_newp1_newp2) / f2_p1p2_newp1)
+            #dist_decreasing_n1, dist_decreasing_n2, min_n = find_n(pi_p1p2_newp1_newp2, int(mpmath.mp.prec/2.6666), mpmath.mp.prec)
+            dist_decreasing_n1, dist_decreasing_n2, min_n = find_n(pi_p1p2_newp1_newp2, int(mpmath.mp.prec/2.6666), 1.5 * mpmath.mp.prec)
+            
+            if float(mpmath.log(newp1)) not in olda.log_p1_e_ary and float(2 * mpmath.log(newp1, p1p2)) not in olda.log_p1_p1p2_ary:
+                olda.log_p1_e_ary.append(float(mpmath.log(newp1)))
+                olda.log_p1_p1p2_ary.append(float(2 * mpmath.log(newp1, p1p2)))
+                olda.log_p1_e_hsh[olda.log_p1_p1p2_ary[-1]] = olda.log_p1_e_ary[-1] 
+                olda.log_p1_p1p2_hsh[olda.log_p1_e_ary[-1]] = olda.log_p1_p1p2_ary[-1]
+                
+                olda.f1_hsh[olda.log_p1_e_ary[-1]] = f1_newp1_newp2
+                olda.f2_hsh[olda.log_p1_e_ary[-1]] = f2_p1p2_newp1
+                olda.pi_hsh[olda.log_p1_e_ary[-1]] = pi_p1p2_newp1_newp2
+                olda.log_pi_hsh[olda.log_p1_e_ary[-1]] = mpmath.log(pi_p1p2_newp1_newp2, mpmath.pi())
+                olda.log_min_n_hsh[olda.log_p1_e_ary[-1]] = mpmath.log(min_n, p1p2)
+                olda.log_dist_decr_n1_hsh[olda.log_p1_e_ary[-1]] = mpmath.log(dist_decreasing_n1, p1p2)
+                olda.log_dist_decr_n2_hsh[olda.log_p1_e_ary[-1]] = mpmath.log(dist_decreasing_n2, p1p2)
+            else:
+                print("")
+                print("skipping found value " + str(float(mpmath.log(newp1))) + ", " + str(float(mpmath.log(newp1, p1p2))))
+            
+            print("")
+            print(str(int(newp1)) + ", " + str(int(newp2)))
+            print("pi_p1p2_newp1_newp2 " + str(pi_p1p2_newp1_newp2))
+            print("min_n " + str(min_n) + " (2^" + str(float(mpmath.log(min_n, 2))) + ")")
+            print("dist_decreasing_n1 " + str(dist_decreasing_n1) + " (2^" + str(float(mpmath.log(dist_decreasing_n1, 2))) + ")")
+            print("dist_decreasing_n2 " + str(dist_decreasing_n2) + " (2^" + str(float(mpmath.log(dist_decreasing_n2, 2))) + ")")
+            print("mpmath.log(min_n, p1p2) " + str(mpmath.log(min_n, p1p2)))
+            print("mpmath.log(dist_decreasing_n1, p1p2) " + str(mpmath.log(dist_decreasing_n1, p1p2)))
+            print("mpmath.log(dist_decreasing_n2, p1p2) " + str(mpmath.log(dist_decreasing_n2, p1p2)))
+            
+            f1_newp1_newp2 = mpmath.exp(mpmath.log(newp2) - mpmath.log(newp1))
+            f2_newp1p2_newp1 = mpmath.exp(mpmath.log(mpmath.sqrt(newp1p2)) - mpmath.log(newp1))
+            pi_newp1p2_newp1_newp2 = mpmath.exp(mpmath.log(mpmath.log(newp1p2) / f1_newp1_newp2) / f2_newp1p2_newp1)
+            #dist_decreasing_n1, dist_decreasing_n2, min_n = find_n(pi_newp1p2_newp1_newp2, int(mpmath.mp.prec/2.6666), mpmath.mp.prec)
+            dist_decreasing_n1, dist_decreasing_n2, min_n = find_n(pi_newp1p2_newp1_newp2, int(mpmath.mp.prec/2.6666), 1.5 * mpmath.mp.prec)
+            
+            if float(mpmath.log(newp1)) not in newa.log_p1_e_ary and float(2 * mpmath.log(newp1, newp1p2)) not in newa.log_p1_p1p2_ary:
+                newa.log_p1_e_ary.append(float(mpmath.log(newp1)))
+                newa.log_p1_p1p2_ary.append(float(2 * mpmath.log(newp1, newp1p2)))
+                newa.log_p1_e_hsh[newa.log_p1_p1p2_ary[-1]] = newa.log_p1_e_ary[-1] 
+                newa.log_p1_p1p2_hsh[newa.log_p1_e_ary[-1]] = newa.log_p1_p1p2_ary[-1]
+                
+                newa.f1_hsh[newa.log_p1_e_ary[-1]] = f1_newp1_newp2
+                newa.f2_hsh[newa.log_p1_e_ary[-1]] = f2_newp1p2_newp1
+                newa.pi_hsh[newa.log_p1_e_ary[-1]] = pi_newp1p2_newp1_newp2
+                newa.log_pi_hsh[newa.log_p1_e_ary[-1]] = mpmath.log(pi_newp1p2_newp1_newp2, mpmath.pi())
+                newa.log_min_n_hsh[newa.log_p1_e_ary[-1]] = mpmath.log(min_n, newp1p2)
+                newa.log_dist_decr_n1_hsh[newa.log_p1_e_ary[-1]] = mpmath.log(dist_decreasing_n1, newp1p2)
+                newa.log_dist_decr_n2_hsh[newa.log_p1_e_ary[-1]] = mpmath.log(dist_decreasing_n2, newp1p2)
+            else:
+                print("")
+                print("skipping found value " + str(float(mpmath.log(newp1))) + ", " + str(float(mpmath.log(newp1, newp1p2))))
+            
+            print("")
+            print(str(int(newp1)) + ", " + str(int(newp2)))
+            print("pi_newp1p2_newp1_newp2 " + str(pi_newp1p2_newp1_newp2))
+            print("min_n " + str(min_n) + " (2^" + str(float(mpmath.log(min_n, 2))) + ")")
+            print("dist_decreasing_n1 " + str(dist_decreasing_n1) + " (2^" + str(float(mpmath.log(dist_decreasing_n1, 2))) + ")")
+            print("dist_decreasing_n2 " + str(dist_decreasing_n2) + " (2^" + str(float(mpmath.log(dist_decreasing_n2, 2))) + ")")
+            print("mpmath.log(min_n, newp1p2) " + str(mpmath.log(min_n, newp1p2)))
+            print("mpmath.log(dist_decreasing_n1, newp1p2) " + str(mpmath.log(dist_decreasing_n1, newp1p2)))
+            print("mpmath.log(dist_decreasing_n2, newp1p2) " + str(mpmath.log(dist_decreasing_n2, newp1p2)))
+            
+    except NameError as ne:
+        print("NameError " + str(ne))
+        break
+    except AttributeError as ae:
+        print("AttributeError " + str(ae))
+        break
+    except OverflowError as oe:
+        print("OverflowError " + str(oe))
+        pass
+    except Exception as ex:
+        print(str(type(ex)) + " " + str(ex))
+        pass
+
+
+plot_y = sorted([x for x in newa.log_pi_hsh.values()])
+_ = plt.plot([x for x in range(0, len(plot_y))], plot_y)
+_ = plt.hist([float(x) for x in newa.log_pi_hsh.values()], bins=30)
+_ = plt.hist([float(x) for x in olda.log_pi_hsh.values()], bins=30)
+plt.grid()
+plt.show()
+
+plot_x = sorted([olda.log_p1_e_ary[i] for i in range(0, len(olda.log_p1_e_ary)) if olda.log_pi_hsh[olda.log_p1_e_ary[i]] > 0.75 and olda.log_pi_hsh[olda.log_p1_e_ary[i]] < 1.25])
+plot_y = [olda.log_pi_hsh[plot_x[i]] for i in range(0, len(plot_x))]
+plot_x = sorted([olda.log_p1_e_ary[i] for i in range(0, len(olda.log_p1_e_ary)) if olda.log_pi_hsh[olda.log_p1_e_ary[i]] > 0.5 and olda.log_pi_hsh[olda.log_p1_e_ary[i]] < 1.5])
+plot_y = [olda.log_pi_hsh[plot_x[i]] for i in range(0, len(plot_x))]
+plot_x = sorted(olda.log_p1_e_ary)
+plot_y = [olda.log_pi_hsh[plot_x[i]] for i in range(0, len(plot_x))]
+_ = plt.plot(plot_x, plot_y)
+plt.grid()
+plt.show()
+
+plot_x = sorted(newa.log_p1_e_ary)
+plot_y = [newa.log_pi_hsh[plot_x[i]] for i in range(0, len(plot_x))]
+_ = plt.plot(plot_x, plot_y)
+plt.grid()
+plt.show()
+
+min(olda.log_p1_p1p2_ary)
+0.960765059322892
+float(true_logp1_p1p2)
+0.4870742049620866
+plot_x = sorted(olda.log_p1_p1p2_ary)
+plot_y = [olda.log_dist_decr_n2_hsh[olda.log_p1_e_hsh[x]] for x in sorted(olda.log_p1_p1p2_ary)]
+_ = plt.plot(plot_x, plot_y)
+_ = plt.plot([true_logp1_p1p2, true_logp1_p1p2], [min(plot_y), max(plot_y)])
+plt.grid()
+plt.show()
+
+plt.plot(olda.log_p1_e_ary, olda.log_min_n_ary)
+plt.plot(olda.log_p1_p1p2_ary, olda.log_min_n_ary)
+#plt.plot(newa.log_p1_e_ary, newa.log_min_n_ary)
+plt.plot(newa.log_p1_p1p2_ary, newa.log_min_n_ary)
+plt.grid()
+plt.show()
+
+plt.plot(olda.log_p1_e_ary, olda.log_dist_decr_n_ary)
+plt.plot(olda.log_p1_p1p2_ary, olda.log_dist_decr_n_ary)
+#plt.plot(newa.log_p1_e_ary, newa.log_dist_decr_n_ary)
+plt.plot(newa.log_p1_p1p2_ary, newa.log_dist_decr_n_ary)
+plt.grid()
+plt.show()
+
+plt.plot(olda.log_p1_e_ary, [mpmath.power(abs(olda.log_dist_decr_n_ary[i] - olda.log_min_n_ary[i]), 0.25) for i in range(0, len(olda.log_min_n_ary))])
+plt.plot(olda.log_p1_p1p2_ary, [mpmath.power(abs(olda.log_dist_decr_n_ary[i] - olda.log_min_n_ary[i]), 0.25) for i in range(0, len(olda.log_min_n_ary))])
+plt.grid()
+plt.show()
+
+plt.plot(olda.log_p1_p1p2_ary, olda.log_pi_ary)
+plt.grid()
+plt.show()
+
+
+# min_n, dist_decreasing_n = find_n(mpmath.mpf('3.131501664191563910690803002383842072068'), 128)
+# min_n
+# mpf('1341683415130235180.1477260203434206913139')
+# dist_decreasing_n
+# mpf('36893488147419103232.0')
+# mpmath.log(min_n, 2)
+# mpf('60.21875')
+# mpmath.log(dist_decreasing_n, 2)
+# mpf('65.0')
+# mpmath.log(min_n, p1p2)
+# mpf('0.67831194882720033637933097687746845634305')
+# mpmath.log(dist_decreasing_n, p1p2)
+# mpf('0.73216857994840513734769508661397736854868')
+
+# mpmath.log(mpmath.log(p1p2)/mpmath.mpf('4.9076628617729954155592273914703170395774'), mpmath.pi())
+# mpf('2.2090984420997390122664479891647482136938')
+# mpmath.log(mpmath.log(mpmath.log(p1p2)/mpmath.mpf('4.9076628617729954155592273914703170395774'), 2 * mpmath.pi()), 1 + mpmath.exp(-1))
+# mpf('1.0187714125946917425422382777536103818282')
+# mpmath.log(1/ (mpmath.log(mpmath.log(mpmath.log(p1p2)/mpmath.mpf('4.9076628617729954155592273914703170395774'), 2*mpmath.pi()), 1 + mpmath.exp(-1)) - 1))
+# mpf('3.9754201731072248138491137621645187323209')
+# mpmath.log(1/ (mpmath.log(mpmath.log(mpmath.log(p1p2)/mpmath.mpf('4.9076628617729954155592273914703170395774'), 2*mpmath.pi()), 1 + mpmath.exp(-1)) - 1), mpmath.pi())
+# mpf('3.4728019441524637383956984713638197499845')
+# mpmath.log(1/ (mpmath.log(mpmath.log(mpmath.log(p1p2)/mpmath.mpf('4.9076628617729954155592273914703170395774'), 2*mpmath.pi()), 1 + mpmath.exp(-1)) - 1), 2 * mpmath.pi())
+# mpf('2.1630501004476814253448138755409720478312')
+
+p1, p2 = 10396522617497, 51022627941473
+x = mpmath.fmul(p1, p2)
+n = mpmath.power(2, int(mpmath.mp.prec/2))
+logx1 = mpmath.fdiv(n, mpmath.fdiv(1, mpmath.log(1 + mpmath.fdiv(mpmath.log(x), n))) - 0.5)
+x1 = mpmath.exp(logx1)
+logx2 = mpmath.log(x)
+squaredx2 = mpmath.power(logx2/mpmath.pi(), 2)
+fracx2 = fractions.Fraction(float(mpmath.fmod(squaredx2, 1))).limit_denominator(12)
+squaredx2 = mpmath.floor(squaredx2 * fracx2.denominator) if mpmath.fmod(squaredx2 * fracx2.denominator, 1) < 0.5 else mpmath.ceil(squaredx2 * fracx2.denominator)
+x2 = mpmath.exp(mpmath.sqrt(squaredx2/fracx2.denominator)*mpmath.pi())
+
+x1/x
+x2/x
+
+m = e^(2^64 / (1/log(1 + ln(m)/2^64) - 1/2))
+n = e^(2^64 / (1/log(1 + ln(n)/2^64) - 1/2))
+m*n = e^(2^64 / (1/log(1 + ln(m*n)/2^64) - 1/2))
+p1p2 = e^(2^64 / (1/log(1 + ln(p1p2)/2^64) - 1/2))
+
+p1p2 % m = n
+p1p2 % n = m
+
+e^(2^64 / (1/log(1 + ln(p1p2)/2^64) - 1/2)) % e^(2^64 / (1/log(1 + ln(p1)/2^64) - 1/2)) = e^(2^64 / (1/log(1 + ln(p1p2/p1)/2^64) - 1/2))
+e^(2^64 / (1/log(1 + ln(p1p2)/2^64) - 1/2)) % e^(2^64 / (1/log(1 + ln(p2)/2^64) - 1/2)) = e^(2^64 / (1/log(1 + ln(p1p2/p2)/2^64) - 1/2))
+
+
+log(p1p2) = (2^64 / (1/log(1 + ln(p1)/2^64) - 1/2)) + (2^64 / (1/log(1 + ln(p2)/2^64) - 1/2))
+
+(2^64 / (1/log(1 + ln(p1p2)/2^64) - 1/2)) = (2^64 / (1/log(1 + ln(p1)/2^64) - 1/2)) + (2^64 / (1/log(1 + ln(p1p2/p1)/2^64) - 1/2))
+(1 / (1/log(1 + ln(p1p2)/2^64) - 1/2)) = (1 / (1/log(1 + ln(p1)/2^64) - 1/2)) + (1 / (1/log(1 + ln(p1p2/p1)/2^64) - 1/2))
+
+
+(1 + x/n)^(n + eps) = e^x
+(n + eps)*log(1 + x/n) = x
+eps*log(1 + x/n) = x - n*log(1 + x/n)
+eps = (x - n*log(1 + x/n))/log(1 + x/n)
+eps = (x/n - log(1 + x/n))/((1/n) * log(1 + x/n))
+
+# (x/n - log(1 + x/n)) / ((1/n) * log(1 + x/n))
+myepsilon4 = lambda x, n: mpmath.fdiv(mpmath.fdiv(x, n) - mpmath.log(1 + mpmath.fdiv(x, n)), mpmath.fdiv(1, n) * mpmath.log(1 + mpmath.fdiv(x, n)))
+eps = (x/log(1 + x/n)) - n
+eps = x/2
+
+L'Hopital's Rule
+x, n = sympy.symbols("x n")
+sympy.Derivative("x/n - log(1 + x/n)", "n").doit()   = -x/n**2 + x/(n**2*(1 + x/n))
+sympy.Derivative("(1/n) * log(1 + x/n)", "n").doit() = -log(1 + x/n)/n**2 - x/(n**3*(1 + x/n))
+
+(-x/n**2 + x/(n**2*(1 + x/n))) / (-log(1 + x/n)/n**2 - x/(n**3*(1 + x/n)))
+(-x + x/(1 + x/n)) / (-log(1 + x/n) - x/(n*(1 + x/n)))
+(-x + x/(1 + x/n)) / (-log(1 + x/n) - x/(n + x))
+
+sympy.Derivative("-x + x/(1 + x/n)", "n").doit()          = x**2/(n**2*(1 + x/n)**2)
+sympy.Derivative("-log(1 + x/n) - x/(n + x)", "n").doit() = x/(n + x)**2 + x/(n**2*(1 + x/n))
+
+(x**2/(n**2*(1 + x/n)**2)) / (x/(n + x)**2 + x/(n**2*(1 + x/n)))
+(x**2/(1 + x/n)**2) / (x*n**2/(n + x)**2 + x/(1 + x/n))
+(x**2/(1 + x/n)) / (x*n**2*(1 + x/n)/(n + x)**2 + x)
+(x**2/(1 + x/n)) / (x*n**2*(1 + x/n)/(n**2 + 2*x*n + x**2) + x)
+(x**2/(1 + x/n)) / (x*(1 + x/n)/(1 + 2*x/n + x**2/n**2) + x)
+x**2 / (x / 1 + x)
+x**2 / (2*x)
+x / 2
