@@ -1,0 +1,204 @@
+L'Hopital's Rule
+x, n, i = sympy.symbols("x n i")
+sympy.Derivative("(1/n)*log(cos(x) + i * sin(x)) - log(1 + (x*i)/n)", "n").doit() = i*x/(n**2*(i*x/n + 1)) - log(i*sin(x) + cos(x))/n**2
+sympy.Derivative("(1/n)*log(1 + (x*i)/n)", "n").doit()                            = -i*x/(n**3*(i*x/n + 1)) - log(i*x/n + 1)/n**2
+
+(i*x/(n**2*(i*x/n + 1)) - log(i*sin(x) + cos(x))/n**2) / (-i*x/(n**3*(i*x/n + 1)) - log(i*x/n + 1)/n**2)
+
+sympy.simplify(sympy.expand("(i*x/(n**2*(i*x/n + 1)) - log(i*sin(x) + cos(x))/n**2) / (-i*x/(n**3*(i*x/n + 1)) - log(i*x/n + 1)/n**2)"))
+(-i*n*x + i*x*log(i*sin(x) + cos(x)) + n*log(i*sin(x) + cos(x)))/(i*x*log((i*x + n)/n) + i*x + n*log((i*x + n)/n))
+(-i*x + i*x*log(i*sin(x) + cos(x))/n + log(i*sin(x) + cos(x)))/(i*x*log((i*x + n)/n)/n + i*x/n + log((i*x + n)/n))
+
+sympy.Derivative("(-i*x + i*x*log(i*sin(x) + cos(x))/n + log(i*sin(x) + cos(x)))", "n").doit() = -i*x*log(i*sin(x) + cos(x))/n**2
+sympy.Derivative("(i*x*log((i*x + n)/n)/n + i*x/n + log((i*x + n)/n))", "n").doit()            = i*x*(1/n - (i*x + n)/n**2)/(i*x + n) - i*x*log((i*x + n)/n)/n**2 - i*x/n**2 + n*(1/n - (i*x + n)/n**2)/(i*x + n)
+
+(-i*x*log(i*sin(x) + cos(x))/n**2) / (i*x*(1/n - (i*x + n)/n**2)/(i*x + n) - i*x*log((i*x + n)/n)/n**2 - i*x/n**2 + n*(1/n - (i*x + n)/n**2)/(i*x + n))
+sympy.simplify(sympy.expand("(-i*x*log(i*sin(x) + cos(x))/n**2) / (i*x*(1/n - (i*x + n)/n**2)/(i*x + n) - i*x*log((i*x + n)/n)/n**2 - i*x/n**2 + n*(1/n - (i*x + n)/n**2)/(i*x + n))"))
+
+log(i*sin(x) + cos(x))/(log((i*x + n)/n) + 2)
+eps = log(i*sin(x) + cos(x))/(log(i*x/n + 1) + 2)
+    = log(i*sin(x) + cos(x))/(log(1) + 2)
+    = log(i*sin(x) + cos(x))/2
+
+mpmath.log(mpmath.mpc(0, 1)*mpmath.sin(0.1234) + mpmath.cos(0.1234))
+mpc(real='-9.2055087269362009669408922640471764737243e-40', imag='0.12339999999999999580335696691690827719904')
+mpmath.log(mpmath.mpc(0, 1)*mpmath.sin(0.5678) + mpmath.cos(0.5678))
+mpc(real='-1.3409101314165876081618461342841577406256e-39', imag='0.56779999999999997140065488565596751868725')
+
+eps = i*x/2
+(1 + (x*i)/n)^(n + eps) = cos(x) + i * sin(x)
+(1 + (x*i)/n)^(n + x*i/2) = cos(x) + i * sin(x)
+
+
+
+(1 + x/n)^(n + eps) = z
+(n + eps)*log(1 + x/n) = log(z)
+eps*log(1 + x/n) = log(z) - n*log(1 + x/n)
+eps = (log(z) - n*log(1 + x/n))/log(1 + x/n)
+    = ((1/n)*log(z) - log(1 + x/n))/((1/n)*log(1 + x/n))
+
+L'Hopital's Rule
+z, x, n = sympy.symbols("z x n")
+sympy.Derivative("(1/n)*log(z) - log(1 + x/n)", "n").doit() = x/(n**2*(1 + x/n)) - log(z)/n**2
+sympy.Derivative("(1/n)*log(1 + x/n)", "n").doit()          = -log(1 + x/n)/n**2 - x/(n**3*(1 + x/n))
+
+sympy.simplify(sympy.expand("(x/(n**2*(1 + x/n)) - log(z)/n**2) / (-log(1 + x/n)/n**2 - x/(n**3*(1 + x/n)))"))
+(-n*x + n*log(z) + x*log(z))/(n*log((n + x)/n) + x*log((n + x)/n) + x)
+(-x + log(z) + (x/n)*log(z))/(log((n + x)/n) + (x/n)*log((n + x)/n) + x/n)
+
+sympy.Derivative("-x + log(z) + (x/n)*log(z)", "n").doit()                  = -x*log(z)/n**2
+sympy.Derivative("log((n + x)/n) + (x/n)*log((n + x)/n) + x/n", "n").doit() = n*(1/n - (n + x)/n**2)/(n + x) + x*(1/n - (n + x)/n**2)/(n + x) - x*log((n + x)/n)/n**2 - x/n**2
+
+sympy.simplify(sympy.expand("(-x*log(z)/n**2) / (n*(1/n - (n + x)/n**2)/(n + x) + x*(1/n - (n + x)/n**2)/(n + x) - x*log((n + x)/n)/n**2 - x/n**2)"))
+log(z)/(log((n + x)/n) + 2)
+log(z)/(log(1 + x/n) + 2)
+log(z)/2
+
+
+approx_z = lambda x, n, z: mpmath.power(1 + mpmath.fdiv(x, n), n + mpmath.fdiv(mpmath.log(z), 2))
+approx_z(100, 2**32, 2)
+approx_z(mpmath.log(20), 2**16, 20)
+mpf('20.000000010432251086181570156266440046959')
+
+
+n, eps, x = sympy.symbols("n eps x")
+f1 = sympy.expand("(n + eps)*log(1 + (x*i)/n)")
+eps*log(i*x/n + 1) + n*log(i*x/n + 1)
+f1.diff("x")
+eps*i/(n*(i*x/n + 1)) + i/(i*x/n + 1)
+f2 = sympy.expand("log(cos(x) + i * sin(x))")
+log(i*sin(x) + cos(x))
+f2.diff("x")
+(i*cos(x) - sin(x))/(i*sin(x) + cos(x))
+
+assuming (d/dx) log(i*sin(x) + cos(x)) = i:
+eps*i/(n*(i*x/n + 1)) + i/(i*x/n + 1) = i
+eps/(n*(i*x/n + 1)) + 1/(i*x/n + 1) = 1
+eps/(n*(i*x/n + 1)) = 1 - 1/(i*x/n + 1)
+eps = (n*(i*x/n + 1)) * (1 - 1/(i*x/n + 1))
+eps = n*(i*x/n + 1) - n
+eps = i*x
+
+
+e^(i * x + eps) = cos(x) + i * sin(x)
+(d/dx) (i * x + eps) = (d/dx) log(cos(x) + i * sin(x))
+i = i
+
+e^(i * x) = cos(x + eps) + i * sin(x + eps)
+
+
+
+e^(ln(z)*(a+bi)) = (1 + (ln(z)*(a+bi))/n)^n * (1 + (ln(x)*(a+bi))/n)^(z/2)
+e^x1 = (1 + x1/n1)^n1 * (1 + x1/n1)^(z/2)
+e^x1 = (1 + x1/n1)^2*n1 * (1 + x1/n1)^(z/(2*n1))
+
+z, a, b, n, i = sympy.symbols("z a b n i")
+z, a, b, n, i = 4, 0.75, 41, 17, 1j
+sympy.expand("(1 + (ln(z)*(a+b*i))/n)^n * (1 + (ln(x)*(a+bi))/n)^(z/2)")
+
+z, pow_re, pow_im, n, i = sympy.symbols("z pow_im pow_re n i")
+sympy.expand("(1 + (ln(z)*(pow1 + pow2))/n)^n * (1 + (ln(x)*(pow1 + pow2))/n)^(z/2)")
+
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**n * (1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z/2)
+
+sympy.simplify(sympy.expand("(1 + (ln(z)*(pow_re + pow_im))/n)^(z/2)"))
+for i in [3, 5, 7]:
+    s = str(sympy.simplify(sympy.expand("(1 + (ln(" + str(i) + ")*(pow_re + pow_im))/3)^(" + str(i) + "/2)")))
+    for j in range(2, i + 1):
+        s = s.replace("/" + str(i**j), "/" + str(i) + "^" + str(j))
+    print(s)
+sympy.simplify(sympy.expand())
+
+sqrt(3)*sqrt(pow_im*log(5) + pow_re*log(5) + 3)*(pow_im**2*log(5)**2 + 2*pow_im*pow_re*log(5)**2 + pow_im*log(15625) + pow_re**2*log(5)**2 + pow_re*log(15625) + 9)/27
+
+for i in [3, 5, 7]:
+    s = str(sympy.simplify(sympy.expand("(1 + pow_re*log(z)/" + str(i) + " + pow_im*log(z)/" + str(i) + ")**" + str(i) + "")))
+    for j in range(2, i + 1):
+        s = s.replace("/" + str(i**j), "/" + str(i) + "^" + str(j))
+    print(s)
+pow_im**3*log(z)**3/3^3 + pow_im**2*pow_re*log(z)**3/3^2 + pow_im**2*log(z)**2/3 + pow_im*pow_re**2*log(z)**3/3^2 + 2*pow_im*pow_re*log(z)**2/3 + pow_im*log(z) + pow_re**3*log(z)**3/3^3 + pow_re**2*log(z)**2/3 + pow_re*log(z) + 1
+pow_im**5*log(z)**5/5^5 + pow_im**4*pow_re*log(z)**5/5^4 + pow_im**4*log(z)**4/5^3 + 2*pow_im**3*pow_re**2*log(z)**5/5^4 + 4*pow_im**3*pow_re*log(z)**4/5^3 + 2*pow_im**3*log(z)**3/5^2 + 2*pow_im**2*pow_re**3*log(z)**5/5^4 + 6*pow_im**2*pow_re**2*log(z)**4/5^3 + 6*pow_im**2*pow_re*log(z)**3/5^2 + 2*pow_im**2*log(z)**2/5 + pow_im*pow_re**4*log(z)**5/5^4 + 4*pow_im*pow_re**3*log(z)**4/5^3 + 6*pow_im*pow_re**2*log(z)**3/5^2 + 4*pow_im*pow_re*log(z)**2/5 + pow_im*log(z) + pow_re**5*log(z)**5/5^5 + pow_re**4*log(z)**4/5^3 + 2*pow_re**3*log(z)**3/5^2 + 2*pow_re**2*log(z)**2/5 + pow_re*log(z) + 1
+pow_im**7*log(z)**7/7^7 + pow_im**6*pow_re*log(z)**7/7^6 + pow_im**6*log(z)**6/7^5 + 3*pow_im**5*pow_re**2*log(z)**7/7^6 + 6*pow_im**5*pow_re*log(z)**6/7^5 + 3*pow_im**5*log(z)**5/7^4 + 5*pow_im**4*pow_re**3*log(z)**7/7^6 + 15*pow_im**4*pow_re**2*log(z)**6/7^5 + 15*pow_im**4*pow_re*log(z)**5/7^4 + 5*pow_im**4*log(z)**4/7^3 + 5*pow_im**3*pow_re**4*log(z)**7/7^6 + 20*pow_im**3*pow_re**3*log(z)**6/7^5 + 30*pow_im**3*pow_re**2*log(z)**5/7^4 + 20*pow_im**3*pow_re*log(z)**4/7^3 + 5*pow_im**3*log(z)**3/7^2 + 3*pow_im**2*pow_re**5*log(z)**7/7^6 + 15*pow_im**2*pow_re**4*log(z)**6/7^5 + 30*pow_im**2*pow_re**3*log(z)**5/7^4 + 30*pow_im**2*pow_re**2*log(z)**4/7^3 + 15*pow_im**2*pow_re*log(z)**3/7^2 + 3*pow_im**2*log(z)**2/7 + pow_im*pow_re**6*log(z)**7/7^6 + 6*pow_im*pow_re**5*log(z)**6/7^5 + 15*pow_im*pow_re**4*log(z)**5/7^4 + 20*pow_im*pow_re**3*log(z)**4/7^3 + 15*pow_im*pow_re**2*log(z)**3/7^2 + 6*pow_im*pow_re*log(z)**2/7 + pow_im*log(z) + pow_re**7*log(z)**7/7^7 + pow_re**6*log(z)**6/7^5 + 3*pow_re**5*log(z)**5/7^4 + 5*pow_re**4*log(z)**4/7^3 + 5*pow_re**3*log(z)**3/7^2 + 3*pow_re**2*log(z)**2/7 + pow_re*log(z) + 1
+
+(1 + pow1*log(x)/n + pow2*log(x)/n)**(z/2)
+
+
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**n * (1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z/2)
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**n * (1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z*n/2*n)
+(1 + pow_re*log(z)/n + pow_im*log(z)/n)**2*n * (1 + pow_re*log(z)/n + pow_im*log(x)/n)**(z/2*n)
+
+
+(1 + (pow_re + pow_im)*log(z)/n1)**2*n1
+substitute (pow_re + pow_im)*log(z)/n1 = x2/n2, 2*n1 = n2 + x2/2
+           n2 = 2*n1 - x2/2
+           n2 = n1*x2/((pow_re + pow_im)*log(z))
+           2*n1 - x2/2 = n1*x2/((pow_re + pow_im)*log(z))
+           4*n1 - x2 = 2*n1*x/((pow_re + pow_im)*log(z))
+           ((pow_re + pow_im)*log(z)) = 2*n1*x/(4*n1 - x2)
+           ((pow_re + pow_im)*log(z)) = 2/(4/x2 - 1/n1)
+           (4/x2 - 1/n1) = 2/((pow_re + pow_im)*log(z))
+           1/n1 = 4/x2 - 2/((pow_re + pow_im)*log(z))
+           n1 = 1 / (4/x2 - 2/((pow_re + pow_im)*log(z)))
+           4/x2 = 2/((pow_re + pow_im)*log(z)) + 1/n1
+           x2 = 4/(2/((pow_re + pow_im)*log(z)) + 1/n1)
+            n2 = 2*n1 - x2/2
+            n2 = 2 / (4/x - 2/((pow_re + pow_im)*log(z))) - 1/(1/((pow_re + pow_im)*log(z)) + 1/n1)
+            n2 = 2 / ((2/((pow_re + pow_im)*log(z)) + 1/n1) - 2/((pow_re + pow_im)*log(z))) - 1/(1/((pow_re + pow_im)*log(z)) + 1/n1)
+            x2/2 = 2*n1 - n2
+            x2 = 4*n1 - 2*n2 
+            
+           n2 = 2*n1 - x2/2
+           n2 = n1*x2/x1
+           2*n1 - x2/2 = n1*x2/x1
+           x2/2 = 2*n1 - n1*x2/x1
+           x2 = 4*n1 - 2*n1*x2/x1
+           x2 + 2*n1*x2/x1 = 4*n1
+           x2*(x1 + 2*n1)/x1 = 4*n1
+           x2 = 4*n1*x1/(x1 + 2*n1)
+           x2 = 4*x1/(x1/n1 + 2)
+           x2 = 2*x1
+
+n2, n1, x2, x1, pow_re, pow_im, z = sympy.symbols("n1 n2 x2 x1 pow_re pow_im z")
+sympy.simplify(sympy.expand("2 / ((2/((pow_re + pow_im)*log(z)) + 1/n1) - 2/((pow_re + pow_im)*log(z))) - 1/(1/((pow_re + pow_im)*log(z)) + 1/n1)"))
+n2 = n1*(2*n1 + (pow_im + pow_re)*log(z))/(n1 + (pow_im + pow_re)*log(z))
+x2 = 4*n1 - 2*n2
+   = 4*n1 - 2*n1*(2*n1 + (pow_im + pow_re)*log(z))/(n1 + (pow_im + pow_re)*log(z))
+
+(1 + (pow_re + pow_im)*log(z)/n1)**2*n1
+x1 = (pow_re + pow_im)*log(z)
+x1/n1 = x2/n2
+2*n1 = n2 + x2/2
+
+(1 + (pow_re + pow_im)*log(z)/n1)**2*n1
+(1 + x1/n1)**2*n1
+(1 + x2/n2)**(n2 + x2/2)
+e^(x2) = e^(4*n1 - 2*n1*(2*n1 + (pow_im + pow_re)*log(z))/(n1 + (pow_im + pow_re)*log(z)))
+       = e^(4*n1 - 2*n1*(2*n1 + x1)/(n1 + x1))
+       = e^2*n1*(2 - (2*n1 + x1)/(n1 + x1))
+       = e^2*n1*(2 - n1/(n1 + x1) - 1)
+       = e^2*n1*(1 - n1/(n1 + x1))
+       = e^2*n1*((n1 + x1 - n1)/(n1 + x1))
+       = e^2*n1*(x1/(n1 + x1))
+       = e^(2*x1/(1 + x1/n1))
+       = e^(2*x1) as n1 -> inf
+       = e^(2*(pow_im + pow_re)*log(z))
+       = z^(2*(pow_im + pow_re))
+
+
+e^2*n1*(2 - n1/(n1 + x1) - 1) = 0
+2*n1*(2 - n1/(n1 + x1) - 1) = -inf
+(2 - 1/(1 + x1/n1) - 1) = -inf/2*n1
+1/(1 + x1/n1) = inf/2*n1 - 1
+1/(1 + x1/n1) = (inf - 2*n1)/2*n1
+(1 + x1/n1) = 2*n1/(inf - 2*n1)
+x1/n1 = 2*n1/(inf - 2*n1) - 1
+x1 = 2*n1^2/(inf - 2*n1) - 1
+x1 = 2/(inf/n1^2 - 2/n1) - 1
+x1 = -1
+(pow_im + pow_re)*log(z) = -1
+z^(pow_im + pow_re) = e^-1
+log(z) = -1/(pow_im + pow_re)
+z = -1/(pow_im + pow_re)
+(pow_im + pow_re) = 1/z
+
+
